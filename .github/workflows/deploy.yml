@@ -39,6 +39,7 @@ jobs:
           aws-region: ${{ env.AWS_REGION }}
 
       - uses: aws-actions/amazon-ecr-login@v2
+        id: login-ecr
 
       - name: Build and push
         env:
