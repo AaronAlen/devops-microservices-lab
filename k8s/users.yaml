@@ -13,8 +13,8 @@ spec:
     spec:
       containers:
       - name: users
-        image: users:local
-        imagePullPolicy: IfNotPresent
+        image: red2071722/micro-users:latest
+        imagePullPolicy: Always
         ports: [{containerPort: 3001}]
         resources:
           requests: {cpu: "100m", memory: "128Mi"}

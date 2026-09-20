@@ -13,8 +13,8 @@ spec:
     spec:
       containers:
       - name: inventory
-        image: inventory:local
-        imagePullPolicy: IfNotPresent
+        image: red2071722/micro-inventory:latest
+        imagePullPolicy: Always
         ports: [{containerPort: 3003}]
         resources:
           requests: {cpu: "100m", memory: "128Mi"}

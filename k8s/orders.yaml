@@ -13,8 +13,8 @@ spec:
     spec:
       containers:
       - name: orders
-        image: orders:local
-        imagePullPolicy: IfNotPresent
+        image: red2071722/micro-orders:latest
+        imagePullPolicy: Always
         env:
         - name: USERS_URL
           value: http://users:3001

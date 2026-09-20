@@ -13,8 +13,8 @@ spec:
     spec:
       containers:
       - name: gateway
-        image: gateway:local
-        imagePullPolicy: IfNotPresent
+        image: red2071722/micro-gateway:latest
+        imagePullPolicy: Always
         env:
         - name: USERS_URL
           value: http://users:3001
