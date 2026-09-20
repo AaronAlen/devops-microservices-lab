@@ -1,0 +1,38 @@
+services:
+  users:
+    build: ./services/users
+    environment:
+      PORT: 3001
+    expose:
+      - "3001"
+
+  orders:
+    build: ./services/orders
+    environment:
+      PORT: 3002
+      USERS_URL: http://users:3001
+    expose:
+      - "3002"
+    depends_on:
+      - users
+
+  inventory:
+    build: ./services/inventory
+    environment:
+      PORT: 3003
+    expose:
+      - "3003"
+
+  gateway:
+    build: ./services/gateway
+    environment:
+      PORT: 8080
+      USERS_URL: http://users:3001
+      ORDERS_URL: http://orders:3002
+      INVENTORY_URL: http://inventory:3003
+    ports:
+      - "8080:8080"
+    depends_on:
+      - users
+      - orders
+      - inventory

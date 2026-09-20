@@ -1,0 +1,59 @@
+name: Build and Deploy to EKS
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  id-token: write
+  contents: read
+
+env:
+  AWS_REGION: ap-south-1
+  ECR_REPOSITORY_PREFIX: microservices-lab
+  EKS_CLUSTER_NAME: microservices-lab
+
+jobs:
+  build-push-deploy:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+          - service: users
+            deployment: users
+          - service: orders
+            deployment: orders
+          - service: inventory
+            deployment: inventory
+          - service: gateway
+            deployment: gateway
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ vars.AWS_GITHUB_ROLE_ARN }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Build and push
+        env:
+          REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+        run: |
+          IMAGE="$REGISTRY/${ECR_REPOSITORY_PREFIX}-${{ matrix.service }}:${GITHUB_SHA}"
+          docker build -t "$IMAGE" "services/${{ matrix.service }}"
+          docker push "$IMAGE"
+          echo "IMAGE=$IMAGE" >> "$GITHUB_ENV"
+
+      - name: Configure kubectl
+        run: |
+          aws eks update-kubeconfig --region "$AWS_REGION" --name "$EKS_CLUSTER_NAME"
+
+      - name: Deploy image
+        run: |
+          kubectl -n microservices set image deployment/${{ matrix.deployment }} \
+            ${{ matrix.service }}="$IMAGE"
+          kubectl -n microservices rollout status deployment/${{ matrix.deployment }} --timeout=180s

@@ -1,0 +1,6 @@
+aws_region = "ap-south-1"
+cluster_name = "microservices-lab"
+node_instance_types = ["t3.small"]
+desired_nodes = 1
+min_nodes = 1
+max_nodes = 2

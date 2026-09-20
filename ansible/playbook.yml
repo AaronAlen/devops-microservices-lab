@@ -1,0 +1,5 @@
+- name: Configure load generator
+  hosts: loadgen
+  become: true
+  roles:
+    - loadgen
